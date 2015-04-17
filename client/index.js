@@ -25,14 +25,15 @@ function generateTiles() {
     var eventsUrl = profileUrl + '/events';
     $.getJSON(profileUrl, function(profileresponse){
       $.getJSON(eventsUrl, function(eventsresponse){
-        var commitCount = countCommits(eventsresponse);
-        var $newRow = $("#template").clone();
-        $newRow.find(".image").attr("src", profileresponse.avatar_url);
-        $newRow.find(".name").text(profileresponse.name);
-        $newRow.find(".commits").text(commitCount);
-        $newRow.find(".card.row").css('background-color',colorTiles(commitCount));
-        $newRow.removeClass("hidden");
-        $('#cards-container').append($newRow);
+       var counts = {commitCount: countCommits(eventsresponse), pullCount: countCommits(eventsresponse)};
+       var $newRow = $("#template").clone();
+       $newRow.find(".image").attr("src", profileresponse.avatar_url);
+       $newRow.find(".name").text(profileresponse.name);
+       $newRow.find(".commits").text(counts.commitCount);
+       $newRow.find(".pulls").text(counts.pullCount);
+       $newRow.find(".card.row").css('background-color',colorTiles(counts.commitCount));
+       $newRow.removeClass('hidden');
+       $('#cards-container').append($newRow);
       });
     });
   });
@@ -43,11 +44,15 @@ function colorTiles(dc){
 }
 
 function countCommits(eventsresponse){
-  var commitCount = 0;
+  var counts = {commitCount: 0, pullCount: 0};
+
   eventsresponse.forEach(function(event){
     if(event.payload.comment !== '' && moment.utc(event.created_at).diff(currTime, 'hours') > -24){
-     commitCount++;
+     counts.commitCount++;
+    }
+    if(event.type === 'PullRequestEvent'){
+      counts.pullCount++;
     }
   });
-  return commitCount;
+  return counts;
 }
