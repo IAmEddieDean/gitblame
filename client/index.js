@@ -9,11 +9,11 @@ function init() {
 //var gitIds = ['samerbuna', 'IAmEddieDean', 'dhh', 'ojangali'];
 //var eventCount = [];
 var profiles = [
-  {un:'samerbuna', dailyCommits:3, eventUrl:''},
-  {un:'dhh', dailyCommits:2, eventUrl:'' },
-  {un:'IAmEddieDean', dailyCommits:0, eventUrl:''},
-  {un:'EdsDover', dailyCommits:0, eventUrl:''},
-  {un:'chyld', dailyCommits:0, eventUrl:''},
+  {un:'samerbuna', dailyCommits:3},
+  // {un:'dhh', dailyCommits:2},
+  // {un:'IAmEddieDean', dailyCommits:0, eventUrl:''},
+  // {un:'EdsDover', dailyCommits:0, eventUrl:''},
+  // {un:'chyld', dailyCommits:0, eventUrl:''},
 ];
 function generateTiles() {
   profiles.forEach(function(profile){
@@ -24,7 +24,22 @@ function generateTiles() {
       $newRow.find(".name").text(response.name);
       $newRow.removeClass("hidden");
       $('#cards-container').append($newRow);
-      console.log(response);
+      countCommits(response.events_url.replace('{/privacy}', ''));
+      // console.log(response.events_url.replace('{/privacy}', ''));
+    });
+  });
+}
+function countCommits(events){
+  var timeStamps = []
+  $.getJSON(events, function(response){
+    response.forEach(function(event){
+      if (event.message !== ''){
+        timeStamps.push(event.created_at);
+        console.log(timeStamps);
+        
+      }
+      // event.message ? timeStamps.push(event.created_at) : null;
+      console.log(timeStamps.length);
     });
   });
 }
