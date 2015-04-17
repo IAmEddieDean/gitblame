@@ -33,13 +33,8 @@ function countCommits(events){
   var timeStamps = []
   $.getJSON(events, function(response){
     response.forEach(function(event){
-      if (event.message !== ''){
-        timeStamps.push(event.created_at);
-        console.log(timeStamps);
-        
-      }
-      // event.message ? timeStamps.push(event.created_at) : null;
-      console.log(timeStamps.length);
+      event.message !== '' ? timeStamps.push(event.created_at) : null;
+      compareTimes(timeStamps);
     });
   });
 }
