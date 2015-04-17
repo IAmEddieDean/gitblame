@@ -3,16 +3,22 @@
 $(document).ready(init);
 
 function init() {
-  generateTiles();
+  // generateTiles();
+  populateProfiles();
 }
+
 var currTime = moment.utc();
-var profiles = [
-  {un:'samerbuna', dailyCommits:0},
-  {un:'dhh', dailyCommits:0},
-  {un:'IAmEddieDean', dailyCommits:0},
-  {un:'EdsDover', dailyCommits:0},
-  {un:'chyld', dailyCommits:0}
-];
+var profiles = [];
+
+function populateProfiles(){
+  $.getJSON('https://api.github.com/orgs/coding-house-apr2015/members', function(loginResponse){
+    loginResponse.forEach(function(profile){
+      profiles.push({'un': profile.login});
+    });
+    generateTiles();
+  });
+}
+
 function generateTiles() {
   profiles.forEach(function(profile){
     var profileUrl = 'https://api.github.com/users/' + profile.un;
