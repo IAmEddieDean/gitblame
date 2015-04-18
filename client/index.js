@@ -3,7 +3,6 @@
 $(document).ready(init);
 
 function init() {
-  // generateTiles();
   populateProfiles();
 }
 
@@ -20,24 +19,22 @@ function populateProfiles(){
   });
 }
 
-
 function generateTiles() {
   profiles.forEach(function(profile){
-    var profileUrl = 'https://api.github.com/users/' + profiles.un;
+    var profileUrl = 'https://api.github.com/users/' + profile.un;
     var eventsUrl = profileUrl + '/events';
     $.getJSON(profileUrl, function(profileresponse){
       $.getJSON(eventsUrl, function(eventsresponse){
-        countCommits(eventsresponse);
-        // profiles['commitCount'] = countCommits(eventsresponse)
-        // profiles.push({'commitCount': countCommits(eventsresponse)}, {'pullCount': countCommits(eventsresponse)});
-       var $newRow = $("#template").clone();
-       $newRow.find(".image").attr("src", profileresponse.avatar_url);
-       $newRow.find(".name").text(profileresponse.name);
-       $newRow.find(".commits").text(profiles.commitCount);
-       $newRow.find(".pulls").text(profiles.pullCount);
-       $newRow.find(".card.row").css('background-color',colorTiles(profiles.commitCount));
-       $newRow.removeClass('hidden');
-       $('#cards-container').append($newRow);
+        var commitCount = countCommits(eventsresponse);
+        var PRCount = countPRs(eventsresponse);
+        var $newRow = $("#template").clone();
+        $newRow.find(".image").attr("src", profileresponse.avatar_url);
+        $newRow.find(".name").text(profileresponse.name);
+        $newRow.find(".commits").text(commitCount);
+        $newRow.find(".pulls").text(PRCount);
+        $newRow.find(".card.row").css('background-color',colorTiles(commitCount));
+        $newRow.removeClass('hidden');
+        $('#cards-container').append($newRow);
       });
     });
   });
@@ -48,18 +45,21 @@ function colorTiles(dc){
 }
 
 function countCommits(eventsresponse){
-  //var counts = {commitCount: 0, pullCount: 0};
-
+  var commits = 0;
   eventsresponse.forEach(function(event){
     if(event.payload.comment !== '' && moment.utc(event.created_at).diff(currTime, 'hours') > -24){
-      profiles[commitCount] = (profiles[commitCount] || 0)+1;
-    }
-    if(event.type === 'PullRequestEvent'){
-      profiles[pullCount] = (profiles[pullCount] || 0)+1;
+      commits++;
     }
   });
+  return commits;
+}
 
-  //return commitCount;
-  }
-
-  //return counts;
+function countPRs(eventsresponse){
+  var prs = 0;
+  eventsresponse.forEach(function(event){
+    if(event.type === 'PullRequestEvent' && moment.utc(event.created_at).diff(currTime, 'hours') > -24){
+      prs++;
+    }
+  });
+  return prs;
+}
