@@ -8,10 +8,10 @@ function init() {
 var currTime = moment.utc();
 var profiles = [
   {un:'samerbuna', dailyCommits:0},
-  {un:'dhh', dailyCommits:0},
-  {un:'IAmEddieDean', dailyCommits:0},
-  {un:'EdsDover', dailyCommits:0},
-  {un:'chyld', dailyCommits:0}
+  //{un:'dhh', dailyCommits:0},
+  {un:'IAmEddieDean', dailyCommits:0}
+  //{un:'EdsDover', dailyCommits:0},
+  //{un:'chyld', dailyCommits:0}
 ];
 function generateTiles() {
   profiles.forEach(function(profile){
@@ -23,8 +23,10 @@ function generateTiles() {
         var $newRow = $("#template").clone();
         $newRow.find(".image").attr("src", profileresponse.avatar_url);
         $newRow.find(".name").text(profileresponse.name);
-        $newRow.find(".commits").text(commitCount);
-        $newRow.find(".card.row").css('background-color',colorTiles(commitCount));
+        $newRow.find(".handle").text('@'+profile.un);
+        $newRow.find(".commits").text(commitCount + ' commits');
+        $newRow.find(".card.row").addClass(colorTiles(commitCount));
+        //$newRow.find(".card.row").css('background-color',colorTiles(commitCount));
         $newRow.removeClass("hidden");
         $('#cards-container').append($newRow);
       });
