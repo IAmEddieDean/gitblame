@@ -28,7 +28,6 @@ function generateTiles() {
         var commitCount = countCommits(eventsresponse);
         var PRCount = countPRs(eventsresponse);
         var commentCount = countComments(eventsresponse);
-        //calcScore(commitCount, PRCount, commentCount);
         var $newRow = $("#template").clone();
         $newRow.find(".image").attr("src", profileresponse.avatar_url);
         $newRow.find(".name").text(profileresponse.name);
@@ -36,7 +35,7 @@ function generateTiles() {
         $newRow.find(".comments").text(commentCount + ' Comments');
         $newRow.find(".pulls").text(PRCount + ' Pull Requests');
         $newRow.find(".card.row").addClass('status-'+calcScore(commitCount, PRCount, commentCount));
-        //$newRow.find(".card.row").css(calcScore(commitCount, PRCount, commentCount));
+        // $newRow.find(".score").text(score + ' Total Score');
         $newRow.removeClass('hidden');
         $('#cards-container').append($newRow);
       });
